@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     
     <PackageId>EmvQr</PackageId>
-    <Version>1.2.0</Version>
+    <Version>1.2.1</Version>
     <Authors>Gemini User</Authors>
     <Company>Gemini Corp</Company>
     <Description>A simple .NET library for generating and parsing EMVCo QR Codes.</Description>
