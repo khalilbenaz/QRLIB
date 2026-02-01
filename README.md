@@ -109,6 +109,48 @@ if (providedCrc == calculatedCrc) {
 }
 ```
 
+## Exception Handling (New in v1.2)
+
+The library provides specific exception types for better error handling:
+
+```csharp
+using EmvQr;
+
+try
+{
+    var qr = EmvParser.Parse(rawQr);
+}
+catch (EmvParserException ex)
+{
+    // Handle parsing errors
+    Console.WriteLine($"Parse error: {ex.Message}");
+}
+catch (EmvValidationException ex)
+{
+    // Handle validation errors
+    foreach (var error in ex.ValidationResult.Errors)
+    {
+        Console.WriteLine($"Validation error: {error}");
+    }
+}
+catch (EmvQrException ex)
+{
+    // Handle other EMV QR specific errors
+    Console.WriteLine($"EMV QR error: {ex.Message}");
+}
+```
+
+### Exception Types
+
+| Exception | Description |
+|-----------|-------------|
+| `EmvQrException` | Base exception for all EMV QR related errors |
+| `EmvParserException` | Thrown when parsing fails |
+| `EmvValidationException` | Thrown when validation fails |
+| `EmvBuilderException` | Thrown when building a QR code fails |
+| `InvalidTagException` | Thrown when an invalid tag is used |
+| `InvalidTagValueException` | Thrown when a tag value is invalid |
+
 ## License
 
 MIT
