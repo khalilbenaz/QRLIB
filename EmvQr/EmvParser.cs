@@ -1,11 +1,19 @@
 namespace EmvQr
 {
+    /// <summary>
+    /// Parser for EMV QR code strings
+    /// </summary>
     public static class EmvParser
     {
-        public static EmvQrCode Parse(string rawQr)
+        /// <summary>
+        /// Parses a raw EMV QR code string into an <see cref="EmvQrCode"/> object
+        /// </summary>
+        /// <param name="rawQr">The raw EMV QR code string</param>
+        /// <param name="validateAfterParsing">If true, validates the parsed QR code</param>
+        public static EmvQrCode Parse(string rawQr, bool validateAfterParsing = false)
         {
             if (string.IsNullOrEmpty(rawQr))
-                throw new ArgumentException("QR string cannot be empty");
+                throw new EmvParserException("QR string cannot be empty");
 
             var qr = new EmvQrCode();
             int index = 0;
@@ -21,25 +29,20 @@ namespace EmvQr
                 index += 2;
 
                 if (!int.TryParse(lengthStr, out int length))
-                    throw new FormatException($"Invalid length at index {index - 2}");
+                    throw new EmvParserException($"Invalid length at index {index - 2}");
 
                 if (index + length > rawQr.Length)
-                    throw new FormatException($"Length {length} exceeds data bounds at index {index}");
+                    throw new EmvParserException($"Length {length} exceeds data bounds at index {index}");
 
                 string value = rawQr.Substring(index, length);
                 index += length;
 
                 // Check if this tag usually contains nested data
-                // Merchant Account Information (02-51) and Additional Data (62) can be nested.
-                // However, simple parsing usually treats everything as value unless specified.
-                // For this library, we will check if it is ID 62 (Additional Data Field Template)
-                // or ID 26-51 (Merchant Account Info) which *can* be nested but often aren't for basic use.
-                // Let's implement a recursive parse for ID 62 as a feature.
-                
+                // Additional Data Field Template (62) can be nested and is treated as such by default
                 if (id == EmvTag.AdditionalDataFieldTemplate)
                 {
                     // Attempt to parse nested
-                    try 
+                    try
                     {
                         var nestedObjects = ParseNested(value);
                         qr.AddNestedData(id, nestedObjects);
@@ -52,8 +55,15 @@ namespace EmvQr
                 }
                 else
                 {
+                    // Merchant Account Information (02-51) and other tags are treated as simple strings
+                    // They may contain TLV data but are parsed as values
                     qr.AddData(id, value);
                 }
+            }
+
+            if (validateAfterParsing)
+            {
+                EmvValidator.ValidateAndThrow(qr);
             }
 
             return qr;
@@ -65,7 +75,7 @@ namespace EmvQr
             int index = 0;
             while (index < content.Length)
             {
-                 if (index + 4 > content.Length) break;
+                if (index + 4 > content.Length) break;
 
                 string id = content.Substring(index, 2);
                 index += 2;
@@ -74,7 +84,10 @@ namespace EmvQr
                 index += 2;
 
                 if (!int.TryParse(lengthStr, out int length))
-                    throw new FormatException();
+                    throw new EmvParserException();
+
+                if (index + length > content.Length)
+                    throw new EmvParserException();
 
                 string value = content.Substring(index, length);
                 index += length;

@@ -160,5 +160,30 @@ namespace EmvQr.Standards
         public const string ZAR = "710"; // South African Rand
         public const string ZMW = "967"; // Zambian Kwacha
         public const string ZWL = "932"; // Zimbabwean Dollar
+
+        private static readonly HashSet<string> ValidCurrencies = new HashSet<string>
+        {
+            AED, AFN, ALL, AMD, ANG, AOA, ARS, AUD, AWG, AZN, BAM, BBD, BDT, BGN, BHD, BIF, BMD, BND, BOB, BRL,
+            BSD, BTN, BWP, BYN, BZD, CAD, CDF, CHF, CLP, CNY, COP, CRC, CUP, CVE, CZK, DJF, DKK, DOP, DZD, EGP, ERN,
+            ETB, EUR, FJD, FKP, GBP, GEL, GHS, GIP, GMD, GNF, GTQ, GYD, HKD, HNL, HRK, HTG, HUF, IDR, ILS, INR, IQD,
+            IRR, ISK, JMD, JOD, JPY, KES, KGS, KHR, KMF, KPW, KRW, KWD, KYD, KZT, LAK, LBP, LKR, LRD, LSL, LYD, MAD,
+            MDL, MGA, MKD, MMK, MNT, MOP, MRU, MUR, MVR, MWK, MXN, MYR, MZN, NAD, NGN, NIO, NOK, NPR, NZD, OMR, PAB,
+            PEN, PGK, PHP, PKR, PLN, PYG, QAR, RON, RSD, RUB, RWF, SAR, SBD, SCR, SDG, SEK, SGD, SHP, SLE, SOS, SRD,
+            SSP, STN, SYP, SZL, THB, TJS, TMT, TND, TOP, TRY, TTD, TWD, TZS, UAH, UGX, USD, UYU, UZS, VES, VND, VUV,
+            WST, XAF, XCD, XOF, XPF, YER, ZAR, ZMW, ZWL
+        };
+
+        /// <summary>
+        /// Checks if the provided currency code is a valid ISO 4217 numeric code
+        /// </summary>
+        /// <param name="currencyCode">The 3-digit numeric currency code to validate</param>
+        /// <returns>True if valid, false otherwise</returns>
+        public static bool IsValid(string currencyCode)
+        {
+            if (string.IsNullOrEmpty(currencyCode) || currencyCode.Length != 3)
+                return false;
+
+            return ValidCurrencies.Contains(currencyCode);
+        }
     }
 }
