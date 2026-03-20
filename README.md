@@ -154,3 +154,47 @@ catch (EmvQrException ex)
 ## License
 
 MIT
+
+---
+
+## Architecture
+
+```
+EmvQr/
+├── EmvBuilder.cs           # Fluent API for constructing QR strings
+├── EmvParser.cs            # Parse existing QR strings
+├── EmvValidator.cs         # Validate EMVCo compliance
+├── EmvQrCode.cs            # Core QR code representation
+├── EmvDataObject.cs        # Tag-Length-Value data objects
+├── EmvTag.cs               # EMVCo tag constants
+├── Crc16.cs                # CRC16-CCITT checksum (ISO 13239)
+├── EmvExceptions.cs        # 6 typed exceptions
+└── Standards/
+    ├── Iso18245.cs         # Merchant Category Codes
+    ├── Iso3166.cs          # Country Codes
+    └── Iso4217.cs          # Currency Codes
+
+EmvQr.Tests/
+├── CoreTests.cs            # CRC16, Builder, Parser
+├── FeatureTests.cs         # Nested data, templates
+└── StandardsTests.cs       # ISO validations
+```
+
+## ISO Standards Compliance
+
+| Standard | Usage |
+|----------|-------|
+| EMVCo MPM Spec | QR Code structure |
+| ISO/IEC 13239 | CRC16-CCITT checksum |
+| ISO 18245 | Merchant Category Codes |
+| ISO 3166 | Country Codes |
+| ISO 4217 | Currency Codes (504=MAD, 978=EUR, 840=USD) |
+
+## Contributing
+
+```bash
+git clone https://github.com/khalilbenaz/QRLIB.git
+cd QRLIB
+dotnet restore
+dotnet test
+```
